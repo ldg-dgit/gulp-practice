@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "gulp dev",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -11,5 +12,16 @@
   },
   "author": "Bobby Lee",
   "license": "MIT",
-  "homepage": "https://github.com/ldg-dgit/gulp-practice#readme"
+  "homepage": "https://github.com/ldg-dgit/gulp-practice#readme",
+  "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "@babel/register": "^7.18.9",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0"
+  },
+  "dependencies": {
+    "del": "^7.0.0",
+    "gulp-pug": "^5.0.0"
+  }
 }
