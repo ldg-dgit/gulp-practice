@@ -1,8 +1,10 @@
 import gulp from "gulp";
 import gpug from "gulp-pug";
 import del from "del";
-import connect from "gulp-connect";
-//import ws from "gulp-webserver";
+import ws from "gulp-webserver";
+import image from "gulp-image";
+
+const sass = require("gulp-sass")(require("sass"));
 
 const routes = {
   pug: {
@@ -10,35 +12,37 @@ const routes = {
     src: "src/*.pug",
     dest: "build",
   },
+  img: {
+    src: "src/img/*",
+    dest: "build/img",
+  },
+  scss: {
+    watch: "src/scss/**/*.scss",
+    src: "src/scss/style.scss",
+    dest: "build/css",
+  },
 };
 
-const pug = () => gulp.src(routes.pug.src).pipe(gpug()).pipe(gulp.dest(routes.pug.dest)).pipe(connect.reload());
+const pug = () => gulp.src(routes.pug.src).pipe(gpug()).pipe(gulp.dest(routes.pug.dest));
 
 const clean = () => del(["build/"]);
 
-//const webserver = () => gulp.src("build").pipe(ws({ livereload: true, open: true }));
+const webserver = () => gulp.src("build").pipe(ws({ livereload: true }));
 
-const webserver = () => {
-  connect.server({
-    root: "build",
-    livereload: true,
-    open: true,
-  });
-  return new Promise(function (resolve, reject) {
-    resolve();
-  });
-};
+const img = () => gulp.src(routes.img.src).pipe(image()).pipe(gulp.dest(routes.img.dest));
 
-const detectChange = () => {
+const styles = () => gulp.src(routes.scss.src).pipe(sass().on("error", sass.logError)).pipe(gulp.dest(routes.scss.dest));
+
+const watch = () => {
   gulp.watch(routes.pug.watch, pug);
+  gulp.watch(routes.img.src, img);
+  gulp.watch(routes.scss.watch, styles);
 };
 
-const prepare = gulp.series([clean]);
+const prepare = gulp.series([clean, img]);
 
-const asstes = gulp.series([pug]);
+const assets = gulp.series([pug, styles]);
 
-const postDev = gulp.series([webserver]);
+const live = gulp.parallel([webserver, watch]);
 
-const watch = gulp.series([detectChange]);
-
-export const dev = gulp.series([prepare, asstes, postDev, watch]);
+export const dev = gulp.series([prepare, assets, live]);
